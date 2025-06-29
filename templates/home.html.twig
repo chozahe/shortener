@@ -1,0 +1,12 @@
+<form method="post">
+    <input type="text" name="url" placeholder="Вставь ссылку" required>
+    <button type="submit">Сократить</button>
+</form>
+
+{% if error is defined and error %}
+    <p class="error">{{ error }}</p>
+{% endif %}
+
+{% if short_url is defined and short_url %}
+    <p>Твоя короткая ссылка: <a href="{{ short_url }}">{{ short_url }}</a></p>
+{% endif %}
