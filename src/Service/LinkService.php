@@ -10,12 +10,12 @@ class LinkService
 {
     public function __construct(private LinkRepository $repository) {}
 
-    public function findOrCreate(string $originalUrl): Link
+    public function findOrCreate(string $originalUrl): array
     {
         $existing = $this->repository->findOneBy(['originalUrl' => $originalUrl]);
 
         if ($existing) {
-            return $existing;
+            return ['link' => $existing, 'isNew' => false];
         }
 
         $link = new Link();
@@ -26,11 +26,20 @@ class LinkService
 
         $this->repository->save($link);
 
-        return $link;
+        return ['link' => $link, 'isNew' => true];
     }
+
     public function getByShortId(string $id): ?Link
     {
         return $this->repository->findOneBy(['shortId' => $id]);
+    }
+
+    /**
+     * @return array<Link>
+     */
+    public function getAll(): array
+    {
+        return $this->repository->findAll();
     }
 
     public function increaseVisits(Link $link): void
