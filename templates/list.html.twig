@@ -1,0 +1,63 @@
+<head>
+    <meta charset="UTF-8">
+    <title>управление ссылками</title>
+    <link rel = "stylesheet"href="{{ asset('styles/style.css') }}">
+</head>
+
+<body>
+    {% if all_urls is defined and all_urls %}
+    <table>
+        <thead>
+        <tr>
+            <th>Оригинальная ссылка</th>
+            <th>Короткая ссылка</th>
+            <th>Переходов</th>
+            <th>Последний переход</th>
+            <th>Создана</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for url in all_urls %}
+            <tr>
+                <td><a href="{{ url.originalUrl }}" target="_blank">{{ url.originalUrl }}</a></td>
+                <td><a href="{{ url.shortUrl }}" target="_blank">{{ url.shortUrl }}</a></td>
+                <td>{{ url.visits }}</td>
+                <td>{{url.last_visit ? url.last_visit|date('Y-m-d H:i') : "Еще посещений нет"}}</td>
+                <td>{{ url.created_at|date('Y-m-d H:i') }}</td>
+                <td>
+                        <button class = "delete-button" data-id = "{{ url.id }}">Удалить</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <a href="/"> Сократить ссылку! </a>
+</body>
+
+<script>
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', function (){
+            const urlId = this.dataset.id;
+
+            if(!confirm('Точно удаляем?')){
+                return;
+            }
+
+            fetch('/delete/' + urlId, {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    alert ('Ссылка удалена!');
+                    location.reload();
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            }).catch(error => {
+                alert("ошибка сети: " + error.message);
+            })
+        })
+    })
+</script>

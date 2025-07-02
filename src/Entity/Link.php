@@ -28,6 +28,9 @@ class Link
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastVisitedAt = null;
 
+    #[ORM\Column]
+    private ?bool $isDeleted = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -89,6 +92,18 @@ class Link
     public function setLastVisitedAt(?\DateTimeImmutable $lastVisitedAt): static
     {
         $this->lastVisitedAt = $lastVisitedAt;
+
+        return $this;
+    }
+
+    public function isDeleted(): ?bool
+    {
+        return $this->isDeleted;
+    }
+
+    public function setIsDeleted(bool $isDeleted): static
+    {
+        $this->isDeleted = $isDeleted;
 
         return $this;
     }

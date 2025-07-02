@@ -16,42 +16,36 @@ final class LinkController extends AbstractController
     public function home(Request $request, LinkService $service): Response
     {
         $allLinks = $service->getAll();
-        $allUrls = [];
-        foreach ($allLinks as $link) {
-            $allUrls[] = new LinkDto($link, $request->getSchemeAndHttpHost());
-        }
 
         if ($request->isMethod('POST')) {
             $originalUrl = trim($request->request->get('url'));
 
-            if (!filter_var($originalUrl, FILTER_VALIDATE_URL)) {
+            if (!filter_var($originalUrl, FILTER_VALIDATE_URL) || !preg_match('/^https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i', $originalUrl)) {
                 return $this->render('home.html.twig', [
-                    'error' => 'Неверный URL',
-                    'all_urls' => $allUrls,
+                    'error' => 'Неверный URL'
                 ]);
             }
 
-            ['link' => $link, 'isNew' => $isNew] = $service->findOrCreate($originalUrl);
+            $link = $service->findOrCreate($originalUrl);
             $dto = new LinkDto($link, $request->getSchemeAndHttpHost());
 
-            if(!$isNew) {
-                return $this->render('home.html.twig', [
-                    'all_urls' => $allUrls,
-                    'short_url' => $dto->shortUrl,
-                    'message' => 'Эта ссылка уже была сокращена ранее',
-                ]);
-            }
-
             return $this->render('home.html.twig', [
-               'all_urls' => [
-                   ...$allUrls,
-                   new LinkDto($link, $request->getSchemeAndHttpHost())
-               ],
                 'short_url' => $dto->shortUrl
             ]);
         }
 
-        return $this->render('home.html.twig', ['all_urls' => $allUrls]);
+        return $this->render('home.html.twig');
+    }
+
+    #[Route('/list', name: 'list', methods: ['GET'])]
+    public function list(Request $request, LinkService $service): Response
+    {
+        $allLinks = $service->getAll();
+        $allUrls = [];
+        foreach ($allLinks as $link) {
+            $allUrls[] = new LinkDto($link, $request->getSchemeAndHttpHost());
+        }
+        return $this->render('list.html.twig', ['all_urls' => $allUrls]);
     }
 
     #[Route('/short/{id}', name: 'redirect')]
@@ -65,5 +59,18 @@ final class LinkController extends AbstractController
 
         $service->increaseVisits($link);
         return new RedirectResponse($link->getOriginalUrl());
+    }
+
+    #[Route('/delete/{id}', name: 'delete', methods: ['DELETE'])]
+    public function delete(int $id, LinkService $service): Response
+    {
+        $link = $service->getById($id);
+
+        if (!$link) {
+            return new Response('Ссылка не найдена', 404);
+        }
+
+        $service->delete($link);
+        return new Response('Ссылка была успешно удалена!', 200);
     }
 }

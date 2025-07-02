@@ -1,76 +1,8 @@
-<style>
-    body {
-        font-family: sans-serif;
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 0 20px;
-        background-color: #fafafa;
-    }
-
-    form {
-        margin-bottom: 20px;
-    }
-
-    input[type="text"] {
-        width: 70%;
-        padding: 8px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
-
-    button {
-        padding: 9px 16px;
-        font-size: 16px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-    button:hover {
-        background-color: #45a049;
-    }
-
-    .error {
-        color: red;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-        background-color: white;
-        box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-
-    th, td {
-        padding: 10px;
-        border: 1px solid #ddd;
-        text-align: left;
-    }
-
-    th {
-        background-color: #f2f2f2;
-    }
-
-    tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-
-    a {
-        color: #0066cc;
-        text-decoration: none;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
-</style>
-
+<head>
+    <meta charset="UTF-8">
+    <title>Сократить ссылку!!</title>
+    <link rel = "stylesheet"href="{{ asset('styles/style.css') }}">
+</head>
 
 <form method="post">
     <input type="text" name="url" placeholder="Вставь ссылку" required>
@@ -81,36 +13,10 @@
     <p class="error">{{ error }}</p>
 {% endif %}
 
-{% if message is defined and message %}
-    <p>{{ message }}</p>
-{% endif %}
-
 {% if short_url is defined and short_url %}
     <p>Твоя короткая ссылка: <a href="{{ short_url }}">{{ short_url }}</a></p>
 {% endif %}
 
-{% if all_urls is defined and all_urls %}
-    <table>
-        <thead>
-        <tr>
-            <th>Оригинальная ссылка</th>
-            <th>Короткая ссылка</th>
-            <th>Переходов</th>
-            <th>Создана</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for url in all_urls %}
-            <tr>
-                <td><a href="{{ url.originalUrl }}" target="_blank">{{ url.originalUrl }}</a></td>
-                <td><a href="{{ url.shortUrl }}" target="_blank">{{ url.shortUrl }}</a></td>
-                <td>{{ url.visits }}</td>
-                <td>{{ url.created_at|date('Y-m-d H:i') }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>пока что пусто</p>
-{% endif %}
+<a href="/list">Статистика!</a>
+
 
