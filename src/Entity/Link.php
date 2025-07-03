@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\LinkRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: LinkRepository::class)]
 class Link
@@ -14,6 +15,18 @@ class Link
     private ?int $id = null;
 
     #[ORM\Column(length: 2048)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 1,
+        max: 2048,
+        minMessage: "минимальная длина {{ limit }} символов",
+        maxMessage: "максимальная длина {{ limit }} символов"
+    )]
+    #[Assert\Url(
+        protocols: ["http", "https"],
+        requireTld: true,
+        tldMessage: "введите корректный url!"
+    )]
     private ?string $originalUrl = null;
 
     #[ORM\Column(length: 10)]
@@ -30,6 +43,17 @@ class Link
 
     #[ORM\Column]
     private ?bool $isDeleted = null;
+
+    #[ORM\Column]
+    private ?bool $isDisposable = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Assert\GreaterThanOrEqual(
+        "today",
+        message: "Дата окончания не может быть меньше текущей даты"
+    )]
+    private ?\DateTimeImmutable $expiresAt = null;
+
 
     public function getId(): ?int
     {
@@ -107,4 +131,30 @@ class Link
 
         return $this;
     }
+
+    public function isDisposable(): ?bool
+    {
+        return $this->isDisposable;
+    }
+
+    public function setIsDisposable(bool $isDisposable): static
+    {
+        $this->isDisposable = $isDisposable;
+
+        return $this;
+    }
+
+    public function getExpiresAt(): ?\DateTimeImmutable
+    {
+        return $this->expiresAt;
+    }
+
+    public function setExpiresAt(?\DateTimeImmutable $expiresAt): static
+    {
+        $this->expiresAt = $expiresAt;
+
+        return $this;
+    }
+
+
 }

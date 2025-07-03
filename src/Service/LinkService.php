@@ -5,13 +5,15 @@ namespace App\Service;
 use App\Dto\LinkDto;
 use App\Entity\Link;
 use App\Repository\LinkRepository;
+use Symfony\Component\HttpKernel\Exception\GoneHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 
 class LinkService
 {
     public function __construct(private LinkRepository $repository) {}
 
-    public function findOrCreate(string $originalUrl): Link
+    /*public function findOrCreate(string $originalUrl): Link
     {
         $link = new Link();
         $link->setOriginalUrl($originalUrl);
@@ -23,12 +25,42 @@ class LinkService
         $this->repository->save($link);
 
         return $link;
+    }*/
+    public function create(Link $link): Link
+    {
+        $link->setCreatedAt(new \DateTimeImmutable());
+        $link->setShortId($this->generateUniqueId());
+        $link->setVisits(0);
+        $link->setIsDeleted(false);
+
+        $this->repository->save($link);
+        return $link;
     }
 
-    public function getByShortId(string $id): ?Link
+
+    public function getByShortId(string $id): Link
     {
-        return $this->repository->findOneBy(['shortId' => $id]);
+        $link = $this->repository->findOneBy(['shortId' => $id]);
+
+        if (!$link) {
+            throw new NotFoundHttpException('Ссылка не найдена.');
+        }
+
+        if ($link->isDisposable() && $link->getVisits() >= 1) {
+            throw new GoneHttpException('Одноразовая ссылка уже использовалась.');
+        }
+
+        if (($link->getExpiresAt() !== null)&&($link->getExpiresAt() < new \DateTimeImmutable())) {
+            throw new GoneHttpException('Срок действия ссылки истёк.');
+        }
+
+        if ($link->isDeleted()) {
+            throw new GoneHttpException('Ссылка была удалена.');
+        }
+
+        return $link;
     }
+
 
     /**
      * @return array<Link>

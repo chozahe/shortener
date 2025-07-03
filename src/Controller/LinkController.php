@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Dto\LinkDto;
+use App\Entity\Link;
+use App\Form\LinkForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Service\LinkService;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -14,6 +17,29 @@ final class LinkController extends AbstractController
 {
     #[Route('/', name: 'home', methods: ['GET', 'POST'])]
     public function home(Request $request, LinkService $service): Response
+    {
+        $link = new Link();
+        $form = $this->createForm(LinkForm::class, $link);
+        $form->handleRequest($request);
+
+        if($request->getMethod() === 'POST') {
+            if ($form->isSubmitted() && $form->isValid()) {
+                $service->create($link);
+                return $this->render('home.html.twig', [
+                    'form' => $form->createView(),
+                    'short_url' => $request->getSchemeAndHttpHost() .  '/short/' . $link->getShortId()
+                ]);
+            }
+            return $this->render('home.html.twig', [
+                'form' => $form->createView(),
+            ]);
+        }
+        return $this->render('home.html.twig', [
+            'form' => $form->createView(),
+        ]);
+
+    }
+    /*public function home(Request $request, LinkService $service): Response
     {
         $allLinks = $service->getAll();
 
@@ -35,7 +61,7 @@ final class LinkController extends AbstractController
         }
 
         return $this->render('home.html.twig');
-    }
+    }*/
 
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(Request $request, LinkService $service): Response
@@ -52,12 +78,8 @@ final class LinkController extends AbstractController
     public function redirectToOriginal(string $id, LinkService $service): Response
     {
         $link = $service->getByShortId($id);
-
-        if (!$link) {
-            return new Response('Ссылка не найдена', 404);
-        }
-
         $service->increaseVisits($link);
+
         return new RedirectResponse($link->getOriginalUrl());
     }
 
