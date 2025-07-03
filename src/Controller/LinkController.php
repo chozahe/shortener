@@ -39,30 +39,6 @@ final class LinkController extends AbstractController
         ]);
 
     }
-    /*public function home(Request $request, LinkService $service): Response
-    {
-        $allLinks = $service->getAll();
-
-        if ($request->isMethod('POST')) {
-            $originalUrl = trim($request->request->get('url'));
-
-            if (!filter_var($originalUrl, FILTER_VALIDATE_URL) || !preg_match('/^https?:\/\/[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}(\/.*)?$/i', $originalUrl)) {
-                return $this->render('home.html.twig', [
-                    'error' => 'Неверный URL'
-                ]);
-            }
-
-            $link = $service->findOrCreate($originalUrl);
-            $dto = new LinkDto($link, $request->getSchemeAndHttpHost());
-
-            return $this->render('home.html.twig', [
-                'short_url' => $dto->shortUrl
-            ]);
-        }
-
-        return $this->render('home.html.twig');
-    }*/
-
     #[Route('/list', name: 'list', methods: ['GET'])]
     public function list(Request $request, LinkService $service): Response
     {
