@@ -12,34 +12,59 @@ body {
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     text-align: left;
+    max-width: 420px;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
-    color: #e0e0e0;
-    font-weight: bold;
+    margin-bottom: 8px;
+    color: #d0c8f7;
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-shadow: 0 0 3px #6a4c93;
 }
 
-.form-input {
+.form-input,
+input[type="text"],
+input[type="url"],
+input[type="datetime-local"],
+input[type="checkbox"] {
     width: 100%;
-    padding: 12px;
-    border: 2px solid #6a4c93;
-    border-radius: 6px;
-    background-color: #333;
-    color: #e0e0e0;
-    font-size: 16px;
+    max-width: 420px;
+    padding: 14px 18px;
+    border: 2.5px solid #7a5bbb;
+    border-radius: 8px;
+    background-color: #2f2a44;
+    color: #dddcee;
+    font-size: 1.1rem;
+    font-weight: 500;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: inset 0 0 5px #1e1635;
 }
 
-.form-input:focus {
+.form-input:focus,
+input[type="text"]:focus,
+input[type="url"]:focus,
+input[type="datetime-local"]:focus {
     outline: none;
-    border-color: #9b59b6;
+    border-color: #b490ff;
+    box-shadow: 0 0 8px #b490ff;
 }
 
 .form-checkbox {
-    margin-right: 10px;
+    margin-right: 12px;
+    transform: scale(1.2);
+    vertical-align: middle;
+    cursor: pointer;
+}
+.field-error {
+    color: #ff6f91;
+    font-size: 0.9em;
+    margin-top: 6px;
+    font-weight: 600;
+    text-shadow: 0 0 2px #ff4567;
 }
 
 input[type="text"] {

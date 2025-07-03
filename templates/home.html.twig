@@ -5,7 +5,6 @@
 </head>
 
 {{ form_start(form) }}
-        {{ form_errors(form) }}
 
 <div class="form-group">
     {{ form_label(form.originalUrl) }}
@@ -26,6 +25,9 @@
 </div>
 
 <button type="submit">Создать</button>
+<div class = "field-error">
+    {{ form_errors(form) }}
+</div>
 {{ form_end(form) }}
 
 {% if short_url is defined and short_url %}
