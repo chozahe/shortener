@@ -26,7 +26,7 @@ class LinkForm extends AbstractType
                     'Да' => true,
                     'Нет' => false,
                 ],
-                'expanded' => true,  // true — радио-кнопки, false — селект
+                'expanded' => true,  
                 'multiple' => false,
                 'required' => true
             ])
